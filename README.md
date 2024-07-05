@@ -1,6 +1,6 @@
 # Scipy_2024_TS
 
-This repository includes the codes and paper for the SciPy conference 2024 in Tacoma, WA 2024.
+This repository includes the codes and virtual poster for the SciPy conference 2024 in Tacoma, WA 2024.
 
 # Time Series Models for Energy Consumption Forecasting
 
