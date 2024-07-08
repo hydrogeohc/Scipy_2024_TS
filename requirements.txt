@@ -1,0 +1,34 @@
+# Data manipulation and analysis
+pandas
+numpy
+
+# Visualization
+matplotlib
+
+# Statistical models
+statsmodels
+pmdarima
+
+# Machine learning
+scikit-learn
+
+# AutoML for time series
+autogluon.timeseries
+
+# Deep learning
+tensorflow
+torch
+pytorch_forecasting
+pytorch_lightning
+
+# NLP models
+transformers
+
+# Time series specific
+llmtime
+nixtlats
+
+# Warnings (part of Python standard library, no need to include)
+
+# Note: Versions are not specified to avoid potential conflicts.
+# It's recommended to test compatibility and specify versions as needed.
