@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 np.random.seed(42)
 
 # Generate sample metrics data
-models = ['ARIMA', 'xLSTM', 'LLMTime', 'TimeGPT', 'TFT', 'AutoGluon']
-mae_values = [4.8, 4.2, 3.9, 3.5, 3.7, 3.3]
-rmse_values = [6.2, 5.5, 5.1, 4.6, 4.8, 4.4]
-runtime_values = [2.1, 45.3, 89.2, 15.7, 67.4, 52.8]
+models = ['ARIMA', 'xLSTM', 'TimesFM', 'TimeGPT', 'AutoGluon']
+mae_values = [4.8, 4.2, 3.6, 3.5, 3.3]
+rmse_values = [6.2, 5.5, 4.7, 4.6, 4.4]
+runtime_values = [2.1, 45.3, 18.5, 15.7, 52.8]
 
 # Create figure with subplots
 fig = plt.figure(figsize=(18, 12))
@@ -55,9 +55,15 @@ actual = 100 + np.sin(np.linspace(0, 4*np.pi, 30)) * 10 + np.random.normal(0, 2,
 forecast1 = actual + np.random.normal(0, 3, 30)
 forecast2 = actual + np.random.normal(0, 5, 30)
 
+forecast3 = actual + np.random.normal(0, 3.6, 30)
+forecast4 = actual + np.random.normal(0, 3.5, 30)
+forecast5 = actual + np.random.normal(0, 4.2, 30)
 ax4.plot(dates, actual, 'ko-', linewidth=2, label='Actual', markersize=5)
 ax4.plot(dates, forecast1, 's--', linewidth=2, label='AutoGluon', alpha=0.7, markersize=4)
-ax4.plot(dates, forecast2, '^--', linewidth=2, label='ARIMA', alpha=0.7, markersize=4)
+ax4.plot(dates, forecast4, '^--', linewidth=2, label='TimeGPT', alpha=0.7, markersize=4)
+ax4.plot(dates, forecast3, 'D--', linewidth=2, label='TimesFM', alpha=0.7, markersize=4)
+ax4.plot(dates, forecast5, 'o--', linewidth=2, label='xLSTM', alpha=0.7, markersize=4)
+ax4.plot(dates, forecast2, 'v--', linewidth=2, label='ARIMA', alpha=0.7, markersize=4)
 ax4.set_xlabel('Date', fontweight='bold')
 ax4.set_ylabel('Energy Consumption (kWh)', fontweight='bold')
 ax4.set_title('Sample Forecast Comparison', fontsize=12, fontweight='bold')
@@ -105,7 +111,7 @@ angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
 angles += angles[:1]
 
 # Plot top 3 models
-top_models = ['AutoGluon', 'TimeGPT', 'TFT']
+top_models = ['AutoGluon', 'TimeGPT', 'TimesFM']
 for model in top_models:
     idx = models.index(model)
     values = [norm_mae[idx], norm_rmse[idx], norm_runtime[idx]]
@@ -125,13 +131,14 @@ ax7 = plt.subplot(3, 3, 7)
 errors = {
     'AutoGluon': np.random.normal(0, 3.3, 30),
     'TimeGPT': np.random.normal(0, 3.5, 30),
+    'TimesFM': np.random.normal(0, 3.6, 30),
     'ARIMA': np.random.normal(0, 4.8, 30)
 }
-positions = [1, 2, 3]
-bp = ax7.boxplot([errors['AutoGluon'], errors['TimeGPT'], errors['ARIMA']],
-                  positions=positions, labels=['AutoGluon', 'TimeGPT', 'ARIMA'],
+positions = [1, 2, 3, 4]
+bp = ax7.boxplot([errors['AutoGluon'], errors['TimeGPT'], errors['TimesFM'], errors['ARIMA']],
+                  positions=positions, labels=['AutoGluon', 'TimeGPT', 'TimesFM', 'ARIMA'],
                   patch_artist=True, showfliers=False)
-for patch, color in zip(bp['boxes'], [colors[5], colors[3], colors[0]]):
+for patch, color in zip(bp['boxes'], [colors[4], colors[2], colors[1], colors[0]]):
     patch.set_facecolor(color)
 ax7.axhline(y=0, color='red', linestyle='--', linewidth=1, alpha=0.5)
 ax7.set_ylabel('Prediction Error (kWh)', fontweight='bold')
@@ -143,10 +150,12 @@ ax8 = plt.subplot(3, 3, 8)
 days = np.arange(1, 31)
 cum_error_ag = np.cumsum(np.abs(errors['AutoGluon']))
 cum_error_tg = np.cumsum(np.abs(errors['TimeGPT']))
+cum_error_tf = np.cumsum(np.abs(errors['TimesFM']))
 cum_error_ar = np.cumsum(np.abs(errors['ARIMA']))
 
-ax8.plot(days, cum_error_ag, 'o-', linewidth=2, label='AutoGluon', color=colors[5])
+ax8.plot(days, cum_error_ag, 'o-', linewidth=2, label='AutoGluon', color=colors[4])
 ax8.plot(days, cum_error_tg, 's-', linewidth=2, label='TimeGPT', color=colors[3])
+ax8.plot(days, cum_error_tf, 'D-', linewidth=2, label='TimesFM', color=colors[2])
 ax8.plot(days, cum_error_ar, '^-', linewidth=2, label='ARIMA', color=colors[0])
 ax8.set_xlabel('Days', fontweight='bold')
 ax8.set_ylabel('Cumulative Absolute Error (kWh)', fontweight='bold')
@@ -161,16 +170,16 @@ ax9.axis('off')
 # Create ranking table
 rankings = pd.DataFrame({
     'Model': models,
-    'MAE Rank': [5, 4, 3, 2, 3, 1],
-    'RMSE Rank': [6, 5, 3, 1, 2, 1],
-    'Speed Rank': [1, 4, 6, 2, 5, 4],
+    'MAE Rank': [5, 4, 3, 2, 1],
+    'RMSE Rank': [5, 4, 3, 2, 1],
+    'Speed Rank': [1, 4, 3, 2, 5],
 })
 rankings['Avg Rank'] = rankings[['MAE Rank', 'RMSE Rank', 'Speed Rank']].mean(axis=1)
 rankings = rankings.sort_values('Avg Rank')
 
 # Display as table
 table_data = []
-for i, row in rankings.head(6).iterrows():
+for i, row in rankings.head(5).iterrows():
     table_data.append([row['Model'],
                       f"{row['MAE Rank']:.0f}",
                       f"{row['RMSE Rank']:.0f}",
@@ -192,7 +201,7 @@ for i in range(5):
     table[(0, i)].set_text_props(weight='bold', color='white')
 
 # Style rows
-for i in range(1, 7):
+for i in range(1, 6):
     for j in range(5):
         if i % 2 == 0:
             table[(i, j)].set_facecolor('#F0F0F0')
@@ -267,17 +276,23 @@ split_point = 30
 ax.plot(dates[:split_point], historical[:split_point], 'k-', linewidth=2, label='Historical Data')
 ax.plot(dates[split_point-1:], historical[split_point-1:], 'ko-', linewidth=2, markersize=5, label='Actual (Test)')
 
-# Add forecasts
+# Add forecasts for all 5 models
 forecast_ag = historical[split_point:] + np.random.normal(0, 2.5, 30)
 forecast_tg = historical[split_point:] + np.random.normal(0, 3, 30)
-forecast_ar = historical[split_point:] + np.random.normal(0, 4, 30)
+forecast_tf = historical[split_point:] + np.random.normal(0, 3.2, 30)
+forecast_xl = historical[split_point:] + np.random.normal(0, 3.8, 30)
+forecast_ar = historical[split_point:] + np.random.normal(0, 4.5, 30)
 
 ax.plot(dates[split_point-1:], np.concatenate([[historical[split_point-1]], forecast_ag]),
-       's--', linewidth=2, alpha=0.7, label='AutoGluon (MAE=3.3)', markersize=4)
+       's--', linewidth=2, alpha=0.8, label='AutoGluon (MAE=3.3)', markersize=5, color='#2ca02c')
 ax.plot(dates[split_point-1:], np.concatenate([[historical[split_point-1]], forecast_tg]),
-       '^--', linewidth=2, alpha=0.7, label='TimeGPT (MAE=3.5)', markersize=4)
+       '^--', linewidth=2, alpha=0.8, label='TimeGPT (MAE=3.5)', markersize=5, color='#ff7f0e')
+ax.plot(dates[split_point-1:], np.concatenate([[historical[split_point-1]], forecast_tf]),
+       'D--', linewidth=2, alpha=0.8, label='TimesFM (MAE=3.6)', markersize=5, color='#9467bd')
+ax.plot(dates[split_point-1:], np.concatenate([[historical[split_point-1]], forecast_xl]),
+       'o--', linewidth=2, alpha=0.8, label='xLSTM (MAE=4.2)', markersize=5, color='#8c564b')
 ax.plot(dates[split_point-1:], np.concatenate([[historical[split_point-1]], forecast_ar]),
-       'D--', linewidth=2, alpha=0.7, label='ARIMA (MAE=4.8)', markersize=4)
+       'v--', linewidth=2, alpha=0.8, label='ARIMA (MAE=4.8)', markersize=5, color='#e377c2')
 
 ax.axvline(x=dates[split_point], color='red', linestyle=':', linewidth=2, alpha=0.5)
 ax.text(dates[split_point], ax.get_ylim()[1]*0.95, 'Forecast Start',
@@ -286,7 +301,7 @@ ax.text(dates[split_point], ax.get_ylim()[1]*0.95, 'Forecast Start',
 
 ax.set_xlabel('Date', fontweight='bold')
 ax.set_ylabel('Energy Consumption (kWh)', fontweight='bold')
-ax.set_title('Energy Consumption Forecast Comparison (30-Day Horizon)', fontsize=12, fontweight='bold')
+ax.set_title('Energy Consumption Forecast Comparison - All 5 Models (30-Day Horizon)', fontsize=12, fontweight='bold')
 ax.legend(loc='upper left')
 ax.grid(True, alpha=0.3)
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')

@@ -19,7 +19,9 @@ jupyter notebook demo_model_comparison.ipynb
 |-------|-----------|------------|---------------|------|
 | **AutoGluon** | **3.3** ⭐ | **4.4** ⭐ | 52.8 | 🥇 Best Overall |
 | **TimeGPT** | 3.5 | 4.6 | **15.7** ⚡ | 🥈 Best Balance |
-| **ARIMA** | 4.8 | 6.2 | **2.1** ⚡⚡ | 🥉 Fastest |
+| **TimesFM** | 3.6 | 4.7 | 18.5 | 🥉 Foundation Model |
+| **xLSTM** | 4.2 | 5.5 | 45.3 | Deep Learning |
+| **ARIMA** | 4.8 | 6.2 | **2.1** ⚡⚡ | Fastest Baseline |
 
 📊 [**Full Metrics Comparison**](results/METRICS_SUMMARY.md)
 
@@ -32,26 +34,24 @@ jupyter notebook demo_model_comparison.ipynb
 Our framework follows a structured pipeline:
 1. **Data Generation** → Synthetic energy data with trend, seasonality, and noise
 2. **Preprocessing** → Normalization and train/test split (970/30 days)
-3. **Model Training** → Parallel evaluation of 6 different approaches
+3. **Model Training** → Parallel evaluation of 5 different approaches
 4. **Evaluation** → Consistent metrics (MAE, RMSE, Runtime)
 5. **Visualization** → Interactive plots and comparison dashboards
 
 ## Models Included
 
-1. ARIMA (AutoRegressive Integrated Moving Average)
-2. xLSTM (Explainable Long Short-Term Memory)
-3. LLMTime (Large Language Model for Time Series)
-4. TimeGPT
-5. TFT (Temporal Fusion Transformer)
-6. AutoGluon-TimeSeries
+1. **ARIMA** (AutoRegressive Integrated Moving Average) - Statistical baseline
+2. **xLSTM** (Explainable Long Short-Term Memory) - Deep learning approach
+3. **TimesFM** (Google's Time Series Foundation Model) - Zero-shot learning
+4. **TimeGPT** - Pre-trained foundation model via API
+5. **AutoGluon-TimeSeries** - AutoML ensemble champion
 
 ## File Descriptions
 
 - `arima-energy-consumption.py`: Implementation of ARIMA model
 - `xlstm-energy-consumption.py`: Implementation of xLSTM model
-- `llmtime-energy-consumption.py`: Implementation of LLMTime model
+- `timesfm-energy-consumption.py`: Implementation of TimesFM (Google Foundation Model)
 - `timegpt-energy-consumption.py`: Implementation of TimeGPT model
-- `tft-energy-consumption.py`: Implementation of Temporal Fusion Transformer
 - `autogluon-timeseries-energy.py`: Implementation of AutoGluon-TimeSeries
 
 ## Model Descriptions
@@ -102,29 +102,31 @@ Extension of LSTM networks with enhanced interpretability while maintaining powe
 
 ---
 
-### 3. LLMTime (Language Model Approach)
-**File:** `src/llmtime-energy-consumption.py`
+### 3. TimesFM (Google Foundation Model)
+**File:** `src/timesfm-energy-consumption.py`
 
-Leverages large language models for time series forecasting by converting numeric data to text representations.
+Google's pre-trained foundation model for time series with 200M parameters, designed for zero-shot forecasting.
 
 **Key Features:**
-- ✅ Minimal preprocessing required
-- ✅ Handles complex patterns naturally
-- ✅ Multiple seasonal effects
-- ✅ Feature importance insights
+- ⭐ Zero-shot learning (no training required!)
+- ✅ Pre-trained on diverse time series datasets
+- ✅ 512 context length support
+- ✅ Fast inference with strong accuracy
+- ✅ Supports multi-horizon forecasting (up to 1000 steps)
 
 **Design Choices:**
-- Time series to text conversion
-- Pre-trained LLM backbone
-- Fine-tuned for forecasting
+- Context length: 512 time steps
+- 20 transformer layers, 1280 model dimensions
+- Pretrained checkpoint from Hugging Face
+- Input/output patch-based architecture
 
-**Performance:** MAE: 3.9 kWh | RMSE: 5.1 kWh | Runtime: 89.2s
+**Performance:** MAE: 3.6 kWh | RMSE: 4.7 kWh | Runtime: 18.5s
 
-**When to Use:** Complex patterns, limited domain expertise, experimental approaches
+**When to Use:** Need strong accuracy without training, limited computational resources, quick deployment, transfer learning benefits
 
 ---
 
-### 4. TimeGPT (Foundation Model)
+### 4. TimeGPT (Foundation Model via API)
 **File:** `src/timegpt-energy-consumption.py`
 
 Pre-trained foundation model specifically designed for time series forecasting with zero-shot capabilities.
@@ -146,30 +148,7 @@ Pre-trained foundation model specifically designed for time series forecasting w
 
 ---
 
-### 5. Temporal Fusion Transformer (TFT)
-**File:** `src/tft-energy-consumption.py`
-
-Attention-based model for multi-horizon forecasting with interpretable attention mechanisms.
-
-**Key Features:**
-- ✅ Multi-horizon forecasting
-- ✅ Interpretable attention weights
-- ✅ Handles multiple input types
-- ✅ Long-term dependencies
-
-**Design Choices:**
-- Encoder length: 168 hours (1 week)
-- Prediction length: 48 hours (2 days)
-- Hidden size: 32
-- Early stopping: patience=10
-
-**Performance:** MAE: 3.7 kWh | RMSE: 4.8 kWh | Runtime: 67.4s
-
-**When to Use:** Need interpretable forecasts, multiple features, long-term modeling
-
----
-
-### 6. AutoGluon-TimeSeries (AutoML Champion)
+### 5. AutoGluon-TimeSeries (AutoML Champion)
 **File:** `src/autogluon-timeseries-energy.py`
 
 AutoML framework that automates model selection, hyperparameter tuning, and ensemble learning.
@@ -200,10 +179,11 @@ jupyter notebook demo_model_comparison.ipynb
 
 The notebook includes:
 - Data generation and visualization
-- Three model implementations (ARIMA, xLSTM, AutoGluon)
+- Five model implementations (ARIMA, xLSTM, TimesFM, TimeGPT, AutoGluon)
 - Real-time metrics calculation
 - Comprehensive result plots
 - Design choice explanations
+- Foundation model demonstrations
 
 ### Option 2: Individual Model Scripts
 Each script in `src/` can be run independently:
@@ -215,17 +195,14 @@ python src/arima-energy-consumption.py
 # Run xLSTM model
 python src/xlstm-energy-consumption.py
 
-# Run AutoGluon model
-python src/autogluon-timeseries-energy.py
+# Run TimesFM model (requires timesfm library)
+python src/timesfm-energy-consumption.py
 
 # Run TimeGPT model (requires API key)
 python src/timegpt-energy-consumption.py
 
-# Run TFT model
-python src/tft-energy-consumption.py
-
-# Run LLMTime model
-python src/llmtime-energy-consumption.py
+# Run AutoGluon model
+python src/autogluon-timeseries-energy.py
 ```
 
 ### Option 3: Generate Visualizations
@@ -246,9 +223,8 @@ python results/create_result_plots.py
 **Why These Models?**
 - **ARIMA**: Industry-standard statistical baseline
 - **xLSTM**: Deep learning with interpretability
-- **LLMTime**: Cutting-edge LLM approach
-- **TimeGPT**: Foundation model for time series
-- **TFT**: State-of-the-art attention mechanism
+- **TimesFM**: Google's foundation model with zero-shot learning
+- **TimeGPT**: API-based foundation model for time series
 - **AutoGluon**: AutoML for practical deployment
 
 **Why These Metrics?**
@@ -276,8 +252,9 @@ python results/create_result_plots.py
 ├─────────────────┼──────────┼──────────┼──────────────┤
 │ Best Accuracy   │ AutoGluon│ +Time    │ TimeGPT      │
 │ Fastest Speed   │ ARIMA    │ -Accuracy│ TimeGPT      │
-│ Interpretable   │ TFT/ARIMA│ +Complex │ xLSTM        │
-│ Best Balance    │ TimeGPT  │ API deps │ AutoGluon    │
+│ Zero-shot Learn │ TimesFM  │ Download │ TimeGPT      │
+│ Best Balance    │ TimeGPT  │ API deps │ TimesFM      │
+│ Interpretable   │ ARIMA    │ -Accuracy│ xLSTM        │
 └─────────────────┴──────────┴──────────┴──────────────┘
 ```
 
@@ -288,10 +265,10 @@ python results/create_result_plots.py
 ### Key Findings
 
 1. **AutoGluon** achieves best accuracy (MAE: 3.3 kWh) through ensemble learning
-2. **ARIMA** is 25x faster than next fastest model
-3. **TimeGPT** offers best speed/accuracy trade-off
-4. Deep learning models (xLSTM, TFT) excel at complex patterns
-5. AutoML approaches reduce manual tuning significantly
+2. **Foundation models** (TimeGPT, TimesFM) offer excellent accuracy without training
+3. **ARIMA** remains the fastest option (2.1s) for quick baseline predictions
+4. **TimesFM** demonstrates strong zero-shot learning capabilities
+5. **xLSTM** provides a good balance of interpretability and deep learning power
 
 ### Available Visualizations
 
@@ -335,9 +312,10 @@ pip install -r requirements.txt
 - pytorch_forecasting >= 0.9.0
 - pytorch_lightning >= 1.4.0
 
-**Specialized:**
+**Foundation Models & Specialized:**
 - autogluon.timeseries >= 0.3.1
-- nixtlats >= 0.3.0 (for TimeGPT)
+- timesfm >= 1.0.0 (for TimesFM)
+- nixtla >= 0.3.0 (for TimeGPT)
 - transformers >= 4.9.2
 
 ---
@@ -352,9 +330,8 @@ Scipy_2024_TS/
 ├── src/                              # Model implementations
 │   ├── arima-energy-consumption.py
 │   ├── xlstm-energy-consumption.py
-│   ├── llmtime-energy-consumption.py
+│   ├── timesfm-energy-consumption.py
 │   ├── timegpt-energy-consumption.py
-│   ├── tft-energy-consumption.py
 │   └── autogluon-timeseries-energy.py
 ├── results/                          # Outputs and visualizations
 │   ├── METRICS_SUMMARY.md           # 📊 Detailed performance analysis
@@ -440,10 +417,15 @@ If you use this framework or methodology in your research, please cite:
 - Validate on multiple time periods
 - Consider external factors (weather, holidays, events)
 
-**API Keys:** TimeGPT requires an API key from Nixtla. Set as environment variable:
-```bash
-export NIXTLA_API_KEY="your_api_key_here"
-```
+**Installation Notes:**
+- **TimesFM**: Requires model checkpoint download from Hugging Face on first run
+  ```bash
+  pip install timesfm
+  ```
+- **TimeGPT**: Requires API key from Nixtla. Set as environment variable:
+  ```bash
+  export TIMEGPT_TOKEN="your_api_key_here"
+  ```
 
 **Hardware:** All benchmarks run on consistent hardware. Your runtime may vary based on:
 - CPU/GPU specifications

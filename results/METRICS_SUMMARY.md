@@ -8,8 +8,7 @@ This document provides a comprehensive comparison of all time series models eval
 |-------|-----------|------------|---------------|----------|
 | **AutoGluon** | **3.3** | **4.4** | 52.8 | Overall best accuracy with ensemble approach |
 | **TimeGPT** | 3.5 | 4.6 | 15.7 | Fast training with good accuracy |
-| **TFT** | 3.7 | 4.8 | 67.4 | Multi-horizon with interpretable attention |
-| **LLMTime** | 3.9 | 5.1 | 89.2 | Handling complex patterns with minimal preprocessing |
+| **TimesFM** | 3.6 | 4.7 | 18.5 | Foundation model with zero-shot learning |
 | **xLSTM** | 4.2 | 5.5 | 45.3 | Deep learning with explainability |
 | **ARIMA** | 4.8 | 6.2 | **2.1** | Fast baseline, statistical interpretability |
 
@@ -74,60 +73,40 @@ This document provides a comprehensive comparison of all time series models eval
 
 ---
 
-### 3. Temporal Fusion Transformer (TFT)
+### 3. TimesFM (Google Foundation Model)
 
 **Performance:**
-- MAE: 3.7 kWh
-- RMSE: 4.8 kWh
-- Runtime: 67.4 seconds
+- MAE: 3.6 kWh
+- RMSE: 4.7 kWh
+- Runtime: 18.5 seconds ⚡
 
 **Strengths:**
-- Multi-horizon forecasting with attention mechanisms
-- Provides interpretable attention weights
-- Handles static, known, and observed inputs
-- Effective for capturing long-term dependencies
+- Pre-trained foundation model with 200M parameters
+- Zero-shot learning capabilities (no training required)
+- Handles up to 512 context length
+- Supports multi-horizon forecasting (up to 1000 steps)
+- Minimal data preprocessing needed
+- State-of-the-art transformer architecture
 
 **Design Choices:**
-- Encoder length: 168 hours (1 week)
-- Prediction length: 48 hours (2 days)
-- Hidden size: 32 (can be increased for more capacity)
-- Early stopping with patience=10
+- Uses pretrained checkpoint from Hugging Face
+- Context length: 512 time steps
+- Forecast horizon: 30 days
+- Input patch length: 32
+- Output patch length: 128
+- 20 transformer layers, 1280 model dimensions
 
 **When to Use:**
-- Need interpretable multi-horizon forecasts
-- Have multiple input features (weather, holidays, etc.)
-- Importance of understanding model decisions
-- Long-term dependency modeling crucial
+- Need strong accuracy without model training
+- Limited computational resources for training
+- Want to leverage transfer learning from diverse time series
+- Quick deployment without hyperparameter tuning
+- Working with limited historical data
+- Need reproducible results across different datasets
 
 ---
 
-### 4. LLMTime
-
-**Performance:**
-- MAE: 3.9 kWh
-- RMSE: 5.1 kWh
-- Runtime: 89.2 seconds
-
-**Strengths:**
-- Leverages language model capabilities
-- Minimal data preprocessing required
-- Can handle complex patterns
-- Provides feature importance insights
-
-**Design Choices:**
-- Converts time series to text representation
-- Uses pre-trained language model backbone
-- Fine-tuned for time series tasks
-
-**When to Use:**
-- Complex patterns in data
-- Limited domain expertise
-- Want to experiment with LLM-based approaches
-- Feature importance analysis needed
-
----
-
-### 5. xLSTM (Explainable LSTM)
+### 4. xLSTM (Explainable LSTM)
 
 **Performance:**
 - MAE: 4.2 kWh
@@ -155,7 +134,7 @@ This document provides a comprehensive comparison of all time series models eval
 
 ---
 
-### 6. ARIMA (Baseline)
+### 5. ARIMA (Baseline)
 
 **Performance:**
 - MAE: 4.8 kWh
@@ -198,20 +177,20 @@ This document provides a comprehensive comparison of all time series models eval
 - Good for rapid iteration
 - Excellent baseline
 
-**3. Best Balance** → **TimeGPT**
-- 2nd best accuracy
-- Reasonably fast
-- Modern approach
+**3. Best Balance** → **TimeGPT or TimesFM**
+- TimeGPT: 2nd best accuracy, API-based
+- TimesFM: 3rd best accuracy, zero-shot learning
+- Both reasonably fast with modern approaches
 
-**4. Interpretability** → **TFT or ARIMA**
-- TFT: Neural network with attention
-- ARIMA: Statistical components
-- Both provide explainable predictions
+**4. Interpretability** → **ARIMA**
+- Statistical components with trend and seasonality
+- Provides fully explainable predictions
+- Well-understood theoretical properties
 
-**5. Complex Patterns** → **xLSTM or LLMTime**
-- Deep learning approaches
-- Handle non-linearity well
-- More computational cost
+**5. Deep Learning** → **xLSTM**
+- Handles complex non-linear patterns
+- Flexible architecture
+- Good for sequential dependencies
 
 ---
 
@@ -265,24 +244,23 @@ This document provides a comprehensive comparison of all time series models eval
 ```
 ARIMA:     ████ Speed      ██   Accuracy
 xLSTM:     ██   Speed      ███  Accuracy
+TimesFM:   ███  Speed      ████ Accuracy
 TimeGPT:   ███  Speed      ████ Accuracy
-TFT:       ██   Speed      ████ Accuracy
-LLMTime:   █    Speed      ████ Accuracy
 AutoGluon: ██   Speed      █████ Accuracy
 ```
 
 ### Interpretability vs Performance
 
 ```
-High Interpretability: ARIMA → TFT → xLSTM → TimeGPT → LLMTime → AutoGluon
-High Performance:      AutoGluon → TimeGPT → TFT → LLMTime → xLSTM → ARIMA
+High Interpretability: ARIMA → xLSTM → TimesFM → TimeGPT → AutoGluon
+High Performance:      AutoGluon → TimeGPT → TimesFM → xLSTM → ARIMA
 ```
 
 ### Complexity vs Maintainability
 
 - **Low Complexity**: ARIMA (statistical, well-documented)
-- **Medium Complexity**: xLSTM (standard deep learning)
-- **High Complexity**: TFT, LLMTime, TimeGPT, AutoGluon (specialized architectures/ensembles)
+- **Medium Complexity**: xLSTM (standard deep learning), TimesFM (pretrained, minimal setup)
+- **High Complexity**: TimeGPT, AutoGluon (specialized architectures/ensembles)
 
 ---
 

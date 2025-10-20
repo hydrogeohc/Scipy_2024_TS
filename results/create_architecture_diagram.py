@@ -15,7 +15,6 @@ ax.axis('off')
 # Define colors
 color_data = '#E8F4F8'
 color_prep = '#B8E6F0'
-color_models = ['#FFE5B4', '#FFD699', '#FFCC80']
 color_eval = '#C8E6C9'
 color_viz = '#F8BBD0'
 
@@ -46,34 +45,37 @@ arrow1 = FancyArrowPatch((2.5, 8.1), (3.5, 8.1),
                         arrowstyle='->', mutation_scale=20, linewidth=2, color='#0277BD')
 ax.add_patch(arrow1)
 
-# 3. Model Layer (Three parallel models)
-model_names = ['ARIMA\n(Statistical)', 'xLSTM\n(Deep Learning)', 'AutoGluon\n(AutoML)']
-model_y_positions = [6.0, 4.5, 3.0]
+# 3. Model Layer (Five parallel models)
+model_names = ['ARIMA\n(Statistical)', 'xLSTM\n(Deep Learning)', 'TimesFM\n(Foundation)', 'TimeGPT\n(API-based)', 'AutoGluon\n(AutoML)']
+model_y_positions = [6.5, 5.2, 3.9, 2.6, 1.3]
+color_models = ['#FFE5B4', '#FFD699', '#FFCC80', '#FFB366', '#FFA64D']
 
 for i, (name, y_pos) in enumerate(zip(model_names, model_y_positions)):
-    model_box = FancyBboxPatch((3.5, y_pos - 0.6), 2, 1.2,
+    model_box = FancyBboxPatch((3.5, y_pos - 0.5), 2, 1.0,
                               boxstyle="round,pad=0.1",
                               edgecolor='#E65100', facecolor=color_models[i], linewidth=2)
     ax.add_patch(model_box)
-    ax.text(4.5, y_pos + 0.3, name.split('\n')[0], fontsize=11, fontweight='bold', ha='center', va='center')
-    ax.text(4.5, y_pos, name.split('\n')[1], fontsize=8, ha='center', va='center', style='italic')
+    ax.text(4.5, y_pos + 0.25, name.split('\n')[0], fontsize=10, fontweight='bold', ha='center', va='center')
+    ax.text(4.5, y_pos - 0.05, name.split('\n')[1], fontsize=7, ha='center', va='center', style='italic')
 
     # Arrows from preprocessing to models
-    arrow = FancyArrowPatch((4.5, 7.5), (4.5, y_pos + 0.6),
+    arrow = FancyArrowPatch((4.5, 7.5), (4.5, y_pos + 0.5),
                            arrowstyle='->', mutation_scale=15, linewidth=1.5,
                            color='#01579B', linestyle='--', alpha=0.6)
     ax.add_patch(arrow)
 
 # Add model-specific details
 details = [
-    ['• Auto parameter', '  selection', '• Fast training'],
-    ['• 30-day sequences', '• 2-layer LSTM', '• Adam optimizer'],
-    ['• Ensemble learning', '• Auto tuning', '• Fast preset']
+    ['Auto params', 'Fast (2s)'],
+    ['2x50 LSTM', '20 epochs'],
+    ['Zero-shot', '200M params'],
+    ['API-based', 'Pre-trained'],
+    ['Ensemble', 'Auto-tuned']
 ]
 
 for i, (detail, y_pos) in enumerate(zip(details, model_y_positions)):
     for j, line in enumerate(detail):
-        ax.text(4.5, y_pos - 0.25 - j*0.15, line, fontsize=7, ha='center', va='center')
+        ax.text(4.5, y_pos - 0.3 - j*0.12, line, fontsize=6.5, ha='center', va='center')
 
 # 4. Evaluation Layer
 eval_box = FancyBboxPatch((6.5, 4.0), 2, 2.5,
@@ -148,7 +150,7 @@ workflow_steps = [
     '2. Split into train (970)',
     '   and test (30) samples',
     '',
-    '3. Train 3 models in',
+    '3. Train 5 models in',
     '   parallel with timing',
     '',
     '4. Evaluate on test set',
@@ -169,8 +171,8 @@ method_box = FancyBboxPatch((0.3, 8.7), 9.4, 0.6,
 ax.add_patch(method_box)
 
 # Add footer with key insights
-footer_text = "Key Insight: Framework enables direct comparison across statistical, deep learning, and AutoML approaches"
-ax.text(5, 0.3, footer_text, fontsize=9, ha='center', va='center',
+footer_text = "Key Insight: Framework compares statistical, deep learning, foundation models (zero-shot), and AutoML approaches"
+ax.text(5, 0.3, footer_text, fontsize=8.5, ha='center', va='center',
         style='italic', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.3))
 
 plt.tight_layout()
