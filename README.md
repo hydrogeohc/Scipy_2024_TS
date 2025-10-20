@@ -455,7 +455,6 @@ This project is part of the SciPy 2024 conference materials.
 
 For questions or feedback about this framework:
 - Open an issue on GitHub
-- Contact: [Your contact information]
 
 **Conference:** SciPy 2024, Tacoma, WA
 **Last Updated:** October 2024
